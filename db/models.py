@@ -36,4 +36,5 @@ class Bot(Base, SaveDeleteModelMixin):
                 "end": self.end if self.end is not None else "still alive"}
 
 
-Base.metadata.create_all()
+if not Bot.__tablename__ in Base.metadata.tables:
+    Base.metadata.create_all()
