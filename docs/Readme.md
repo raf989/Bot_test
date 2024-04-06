@@ -17,7 +17,7 @@ docker-compose up
 ![img_1.png](img_1.png)
 
 ## Пример использования
-По url http://localhost:8000/apidocs/ находится swagger. 
+По url http://localhost:8000/ находится swagger. 
 
 ![img_2.png](img_2.png)
 
