@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+
+  server:
+    build:
+      context: .
+    command: bash -c "
+        uvicorn server.app:app --host 0.0.0.0 --reload 
+      "
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - redis_network
+
+  redis:
+    image: redis:7.0.0
+    networks:
+      - redis_network
+    restart: unless-stopped
+
+
+networks:
+  redis_network:

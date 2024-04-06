@@ -2,9 +2,12 @@ from datetime import datetime
 import sys
 import subprocess
 
+import psutil
+import redis
+
 from db import queries
 
-bots = dict()
+redis_connection = redis.Redis(host='redis', port=6379, db=0)
 
 
 def start_bot(start_number=None):
@@ -12,7 +15,7 @@ def start_bot(start_number=None):
     if start_number is not None:
         args.append(str(start_number))
     proc = subprocess.Popen(args)
-    bots[proc.pid] = proc
+    redis_connection.lpush("procs", proc.pid)
 
     queries.new_bot(proc.pid,
                     start_number if start_number is not None else 0,
@@ -22,10 +25,10 @@ def start_bot(start_number=None):
 
 
 def stop_bot(pid):
-    if pid not in bots:
+    if redis_connection.lrem("procs", 1, pid) == 0:
         return False
 
-    bots.pop(pid).kill()
+    psutil.Process(pid).kill()
 
     bot_record = queries.get_bot(pid)
     bot_record.end = datetime.now()
@@ -35,4 +38,7 @@ def stop_bot(pid):
 
 
 def get_active_bot_list():
-    return list(bots.keys())
+    length = redis_connection.llen("procs")
+    if length == 0:
+        return []
+    return [int(pid) for pid in redis_connection.lrange("procs", 0, length - 1)]
