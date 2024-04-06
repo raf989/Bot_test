@@ -13,4 +13,7 @@ if __name__ == '__main__':
     coro = main(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
 
     event_loop.create_task(coro)
-    event_loop.run_forever()
+    try:
+        event_loop.run_forever()
+    except KeyboardInterrupt:
+        pass

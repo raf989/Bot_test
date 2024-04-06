@@ -9,12 +9,14 @@ bots = dict()
 
 def start_bot(start_number=None):
     args = [sys.executable, 'bot/bot.py']
-    if start_number is None:
+    if start_number is not None:
         args.append(str(start_number))
     proc = subprocess.Popen(args)
     bots[proc.pid] = proc
 
-    queries.new_bot(proc.pid, datetime.now())
+    queries.new_bot(proc.pid,
+                    start_number if start_number is not None else 0,
+                    datetime.now())
 
     return proc.pid
 

@@ -27,14 +27,14 @@ class Bot(Base, SaveDeleteModelMixin):
     __tablename__ = "bot_records"
 
     pid = sql.Column(sql.Integer, primary_key=True)
+    start_number = sql.Column(sql.Integer)
     start = sql.Column(sql.DATETIME)
     end = sql.Column(sql.DATETIME, nullable=True)
 
     def serialize(self):
-        return {"pid": self.pid,
+        return {"start_number": self.start_number,
                 "start": self.start,
                 "end": self.end if self.end is not None else "still alive"}
 
 
-if not Bot.__tablename__ in Base.metadata.tables:
-    Base.metadata.create_all()
+Base.metadata.create_all()
